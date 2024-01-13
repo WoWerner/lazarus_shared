@@ -1,0 +1,78 @@
+object frmInput: TfrmInput
+  Left = 463
+  Height = 136
+  Top = 410
+  Width = 665
+  ActiveControl = Edit1
+  Caption = 'Input'
+  ClientHeight = 136
+  ClientWidth = 665
+  KeyPreview = True
+  OnKeyPress = FormKeyPress
+  Position = poScreenCenter
+  LCLVersion = '2.0.6.0'
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 34
+    Width = 34
+    Caption = 'Label1'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 15
+    Top = 72
+    Width = 34
+    Caption = 'Label2'
+    ParentColor = False
+  end
+  object Edit1: TEdit
+    Left = 120
+    Height = 23
+    Top = 32
+    Width = 536
+    ParentShowHint = False
+    TabOrder = 0
+    Text = 'Edit1'
+  end
+  object Edit2: TEdit
+    Left = 120
+    Height = 23
+    Top = 69
+    Width = 536
+    TabOrder = 1
+    Text = 'Edit2'
+  end
+  object btnOK: TButton
+    Left = 120
+    Height = 25
+    Top = 104
+    Width = 75
+    Caption = 'OK'
+    ModalResult = 1
+    TabOrder = 2
+  end
+  object btnCancel: TButton
+    Left = 200
+    Height = 25
+    Top = 104
+    Width = 75
+    Caption = 'Abbrechen'
+    ModalResult = 2
+    TabOrder = 3
+  end
+  object labCaption: TLabel
+    Left = 8
+    Height = 24
+    Top = 1
+    Width = 648
+    Alignment = taCenter
+    AutoSize = False
+    Caption = 'labCaption'
+    Font.Height = -19
+    ParentBidiMode = False
+    ParentColor = False
+    ParentFont = False
+  end
+end
