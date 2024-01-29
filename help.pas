@@ -1027,7 +1027,9 @@ var SQLForm      : TForm;
     MyDS         : TDataSource;
     myGrid       : TDBGrid;
     i,
-    w            : integer;
+    w,
+    r,
+    n            : integer;
     WORKAREA     : TRect;
 
 begin
@@ -1064,7 +1066,18 @@ begin
           MyQue.Open;
 
           //Spaltenberenzung
-          w := max(((screen.Width-100) div myGrid.Columns.Count), 80);
+          w := (screen.Width-60) div myGrid.Columns.Count; //Breite für gleichmäßige Aufteilung
+          n := 0; //Anzahl der Spalten die kleiner sind
+          r := 0; //Restbreite
+          for i := 0 to myGrid.Columns.Count-1 do
+            begin
+              if myGrid.Columns.Items[i].Width < w then
+                begin
+                  inc(n);
+                  r := r + (w- myGrid.Columns.Items[i].Width);
+                end;
+            end;
+          w := w + r div (myGrid.Columns.Count-n); //restlichen Platz verteilen
           for i := 0 to myGrid.Columns.Count-1 do myGrid.Columns.Items[i].Width := min(myGrid.Columns.Items[i].Width, w);
 
           //Anzeigen
@@ -1074,7 +1087,7 @@ begin
           //Exportieren?
           if MessageDlg('Sollen die Daten noch exportiert werden?', mtConfirmation, [mbYes, mbNo],0) = mrYes then
             begin
-              ExportQueToCSVFile(myQue, sPrintPath+'Export_UTF8.csv', ';', '"', false, true);
+              ExportQueToCSVFile(myQue, sPrintPath+'Export_UTF8.csv', ';', '"',false,  true);
               ExportQueToCSVFile(myQue, sPrintPath+'Export_ANSI.csv', ';', '"', true, false);
             end;
 
