@@ -1123,16 +1123,18 @@ end;
 procedure GetPrinterMargins();
 
 begin
-  Showmessage('Printer.PrinterName: '+printer.PrinterName+#13#13+
-              'Printer.PaperSize.Width: '+RealToStr(printer.PaperSize.Width*25.4/printer.XDPI,0,1)+' mm, '+
-                          'Height: '+RealToStr(printer.PaperSize.Height*25.4/printer.XDPI,0,1)+' mm'+#13#13+
-              'Printer.PageWidth: '+RealToStr(printer.PageWidth*25.4/printer.XDPI,0,1)+' mm, '+
-                          'Height: '+RealToStr(printer.PageHeight*25.4/printer.XDPI,0,1)+' mm'+#13#13+
-              'Printer.PaperSize.PaperRect.WorkRect.Left: '+RealToStr(printer.PaperSize.PaperRect.WorkRect.Left*25.4/printer.XDPI,0,1)+' mm'+#13+
-              'Rechter Rand: '+RealToStr((printer.PaperSize.Width-printer.PageWidth-printer.PaperSize.PaperRect.WorkRect.Left)*25.4/printer.XDPI,0,1)+' mm'+#13+
-              'Printer.PaperSize.PaperRect.WorkRect.Top: '+RealToStr(printer.PaperSize.PaperRect.WorkRect.Top*25.4/printer.XDPI,0,1)+' mm'+#13+
-              'Unterer Rand: '+RealToStr((printer.PaperSize.Height-printer.PageHeight-printer.PaperSize.PaperRect.WorkRect.Top)*25.4/printer.XDPI,0,1)+' mm'+#13#13+
-              'Printer.XDPI: '+inttostr(printer.XDPI)+', Printer.YDPI: '+inttostr(printer.YDPI));
+  with printer do
+    Showmessage('PrinterName: '+PrinterName+#13#13+
+                'PaperSize.Width: '+RealToStr(PaperSize.Width*25.4/XDPI,0,1)+' mm'+#13+
+                'PaperSize.Height: '+RealToStr(PaperSize.Height*25.4/YDPI,0,1)+' mm'+#13#13+
+                'PageWidth: '+RealToStr(PageWidth*25.4/XDPI,0,1)+' mm'+#13+
+                'PageHeight: '+RealToStr(PageHeight*25.4/YDPI,0,1)+' mm'+#13#13+
+                'Linker Rand: '+RealToStr(PaperSize.PaperRect.WorkRect.Left*25.4/XDPI,0,1)+' mm'+#13+
+                'Rechter Rand: '+RealToStr((PaperSize.Width-PageWidth-PaperSize.PaperRect.WorkRect.Left)*25.4/XDPI,0,1)+' mm'+#13+
+                'Oberer Rand: '+RealToStr(PaperSize.PaperRect.WorkRect.Top*25.4/XDPI,0,1)+' mm'+#13+
+                'Unterer Rand: '+RealToStr((PaperSize.Height-PageHeight-PaperSize.PaperRect.WorkRect.Top)*25.4/YDPI,0,1)+' mm'+#13#13+
+                'XDPI: '+inttostr(XDPI)+#13+
+                'YDPI: '+inttostr(YDPI));
 end;
 
 {******************************************************************************}
