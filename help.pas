@@ -104,7 +104,7 @@ function SQLiteDateFormat(d: TDateTime): string;
 
 //Datenbank
 function  ExecSQL(SQLCommand : string; MyQue: TZQuery; ShowUpdateMessage: boolean):integer;
-procedure ExportQueToCSVFile(Que: TZQuery; const FileName, sTrenner, sDelimiter: String; FinishMessage, UTF8: boolean);
+procedure ExportQueToCSVFile(Que: TZQuery; const FileName, sTrenner, sDelimiter: String; FinishMessage, UTF8: boolean; IncludeNullEuro: boolean = true);
 function  GetFirstDBFieldAsStringList(Que: TZQuery):String;
 function  GetDBSum(Query: TZQuery; table, field, join, where : string):longint;
 function  IsValInTable(Query: TZQuery; table, field, value : string):boolean;
@@ -291,7 +291,7 @@ end;
 procedure LogAndShowError(s: string);
 
 begin
-  LogAndShow('Exception Message: '+s);
+  LogAndShow('Error Message: '+s);
 end;
 
 //****************************************************************
@@ -481,7 +481,7 @@ begin
   Que.Close;
 end;
 
-procedure ExportQueToCSVFile(Que: TZQuery; const FileName, sTrenner, sDelimiter: String; FinishMessage, UTF8: boolean);
+procedure ExportQueToCSVFile(Que: TZQuery; const FileName, sTrenner, sDelimiter: String; FinishMessage, UTF8: boolean; IncludeNullEuro: boolean = true);
 
 var f: TextFile;
     i,
@@ -542,42 +542,42 @@ begin
     Que.DisableControls;
     Que.Refresh;
     Que.First;
-    While not Que.EOF
-      do
-        begin
-          inc(j);
-          for i := 1 to que.FieldCount do
-            begin
-              if Que.FieldDefs[i-1].Datatype in OutPutDataTypes
-                then
-                  begin
-                    if i > 1 then write(F, sTrenner);
-                    case Que.FieldDefs[i-1].DataType of
-                      ftDate:     s := formatdatetime('dd.mm.yyyy',Que.Fields[i-1].AsDateTime);
-                      ftFloat,
-                      ftCurrency: begin
-                                    if bTausendertrennung
-                                      then s := format('%.2n',[Que.Fields[i-1].AsCurrency])
-                                      else s := format('%.2f',[Que.Fields[i-1].AsCurrency]);
-                                  end;	
-		                  ftMemo    : begin
-		                                s := ReplaceChar(Que.Fields[i-1].asstring, #13, ' ');
-				                            s := ReplaceChar(s, #10, ' ');
-				                            s := StringReplace(s, '  ', ' ', [rfReplaceAll]);
-		                              end;
-                      else
-                                    s := Que.Fields[i-1].asstring;
-                    end;
-                    s := DeleteChars(s, [#10,#13]);
-                    if (pos(sTrenner, s) > 0) or (Que.FieldDefs[i-1].DataType in [ftString, ftMemo])
-                      then s := sDelimiter+s+sDelimiter;
-                    if not UTF8 then s := UTF8toCP1252(s);
-                    Write(F, s);
+    While not Que.EOF do
+      begin
+        inc(j);
+        for i := 1 to que.FieldCount do
+          begin
+            if Que.FieldDefs[i-1].Datatype in OutPutDataTypes
+              then
+                begin
+                  if i > 1 then write(F, sTrenner);
+                  case Que.FieldDefs[i-1].DataType of
+                    ftDate:     s := formatdatetime('dd.mm.yyyy',Que.Fields[i-1].AsDateTime);
+                    ftFloat,
+                    ftCurrency: begin
+                                  if bTausendertrennung
+                                    then s := format('%.2n',[Que.Fields[i-1].AsCurrency])
+                                    else s := format('%.2f',[Que.Fields[i-1].AsCurrency]);
+                                end;
+		    ftMemo    : begin
+		                  s := ReplaceChar(Que.Fields[i-1].asstring, #13, ' ');
+				  s := ReplaceChar(s, #10, ' ');
+				  s := StringReplace(s, '  ', ' ', [rfReplaceAll]);
+		                end;
+                    else
+                                  s := Que.Fields[i-1].asstring;
                   end;
-            end;
-          WriteLn(F, '');
-          Que.Next;
-        end;
+                  s := DeleteChars(s, [#10,#13]);
+                  if not IncludeNullEuro and (s='0,00 €') then s := '';
+                  if (pos(sTrenner, s) > 0) or (Que.FieldDefs[i-1].DataType in [ftString, ftMemo])
+                    then s := sDelimiter+s+sDelimiter;
+                  if not UTF8 then s := UTF8toCP1252(s);
+                  Write(F, s);
+                end;
+          end;
+        WriteLn(F, '');
+        Que.Next;
+      end;
     Que.First;
     Que.EnableControls;
 
