@@ -793,48 +793,55 @@ var
   bNeg                    : boolean;
 
 begin
-  try
-    sHelp  := s;
-    result := 0;
+  if s = ''
+    then
+      begin
+        result := 0;
+      end
+    else
+      begin
+        try
+          sHelp  := s;
+          result := 0;
 
-    //Negativ?
-    bNeg := (pos('-', sHelp) <> 0);
-    if bNeg then sHelp := deletechar(sHelp, '-');
+          //Negativ?
+          bNeg := (pos('-', sHelp) <> 0);
+          if bNeg then sHelp := deletechar(sHelp, '-');
 
-    CountThousandSeparator := CountChar(sHelp, DefaultFormatSettings.ThousandSeparator);
-    CountDecimalSeparator  := CountChar(sHelp, DefaultFormatSettings.DecimalSeparator);
+          CountThousandSeparator := CountChar(sHelp, DefaultFormatSettings.ThousandSeparator);
+          CountDecimalSeparator  := CountChar(sHelp, DefaultFormatSettings.DecimalSeparator);
 
-    //1.000,00  ---> 1000,00
-    if (CountThousandSeparator > 0) and (CountDecimalSeparator > 0) then sHelp := deletechar(sHelp, DefaultFormatSettings.ThousandSeparator);
-    //1000.00  ---> 1000,00
-    if (CountThousandSeparator = 1) and (CountDecimalSeparator = 0) then sHelp := ReplaceChar(sHelp, DefaultFormatSettings.ThousandSeparator, DefaultFormatSettings.DecimalSeparator);
-    //Euromodus: 10 --> 1000
-    if (CountThousandSeparator = 0) and (CountDecimalSeparator = 0) and bEuroM then sHelp := sHelp + '00';
+          //1.000,00  ---> 1000,00
+          if (CountThousandSeparator > 0) and (CountDecimalSeparator > 0) then sHelp := deletechar(sHelp, DefaultFormatSettings.ThousandSeparator);
+          //1000.00  ---> 1000,00
+          if (CountThousandSeparator = 1) and (CountDecimalSeparator = 0) then sHelp := ReplaceChar(sHelp, DefaultFormatSettings.ThousandSeparator, DefaultFormatSettings.DecimalSeparator);
+          //Euromodus: 10 --> 1000
+          if (CountThousandSeparator = 0) and (CountDecimalSeparator = 0) and bEuroM then sHelp := sHelp + '00';
 
-    nPos := pos(DefaultFormatSettings.DecimalSeparator, sHelp);
-    if nPos = 0
-      then //Zahl liegt in Cent vor
-        result := strtoint(sHelp)
-      else
-        begin
-          //Damit 21,1 oder 21, richtig umgewandelt wird, werden jetzt erst ein mal 2 0en angefügt
-          //falls sie schon vorhanden sind, werden sie später ignoriert
-          //für die Zahl ,11 wird noch eine 0 vorne angefügt.
-          sHelp := '0' + sHelp + '00';
+          nPos := pos(DefaultFormatSettings.DecimalSeparator, sHelp);
+          if nPos = 0
+            then //Zahl liegt in Cent vor
+              result := strtoint(sHelp)
+            else
+              begin
+                //Damit 21,1 oder 21, richtig umgewandelt wird, werden jetzt erst ein mal 2 0en angefügt
+                //falls sie schon vorhanden sind, werden sie später ignoriert
+                //für die Zahl ,11 wird noch eine 0 vorne angefügt.
+                sHelp := '0' + sHelp + '00';
 
-          //Jetzt sieht die Zahl ggf so aus: '0,1100'
-          nPos := pos(DefaultFormatSettings.DecimalSeparator, sHelp); //neu bestimmen
-          Euro := copy(sHelp, 1, nPos-1);
-          Cent := copy(sHelp, nPos+1, 2);
-          result := (strtoint(Euro)*100) + strtoint(Cent);
+                //Jetzt sieht die Zahl ggf so aus: '0,1100'
+                nPos := pos(DefaultFormatSettings.DecimalSeparator, sHelp); //neu bestimmen
+                Euro := copy(sHelp, 1, nPos-1);
+                Cent := copy(sHelp, nPos+1, 2);
+                result := (strtoint(Euro)*100) + strtoint(Cent);
+              end;
+        except
+          ShowMessage('"'+s+'" hat ein ungültiges Währungsformat');
+          result := 0;
         end;
-  except
-    ShowMessage('"'+s+'" hat ein ungültiges Währungsformat');
-    result := 0;
-  end;
 
-  if bNeg then result := -1 * result;
-
+        if bNeg then result := -1 * result;
+      end;
 end;
 
 {******************************************************************************}
