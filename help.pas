@@ -145,7 +145,7 @@ uses
 
 Const OutPutDataTypes = [ftUnknown,
                          ftString,
-			                   ftMemo,
+			 ftMemo,
                          ftSmallint,
                          ftInteger,
                          ftLargeint,

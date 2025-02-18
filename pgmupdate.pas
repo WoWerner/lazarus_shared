@@ -53,6 +53,7 @@ implementation
 
 uses
   LazUTF8,
+  global,
   help;
 
 {$R *.lfm}
@@ -194,6 +195,7 @@ begin
             UnZipper.UnZipFiles(sNewFiles);
             Logger('Alle Dateien entpackt.');
             if EXE_Found then Logger('Bitte '+AppName+' neu starten');
+            help.WriteIniVal(sIniFile, 'Programm', 'CleanUpRequired', 'true');
           finally
             FreeAndNil(UnZipper);
           end;
